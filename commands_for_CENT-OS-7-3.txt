@@ -1,0 +1,92 @@
+ALICE-O2 for CentOS Linux release 7.3.1611 (Core) 
+=====================================================================================
+
+1) git clone -b dev https://github.com/FairRootGroup/FairSoft.git
+cd FairSoft/
+ls
+./configure.sh 
+ls
+cd ../
+ls
+----------------------------
+2) git clone https://github.com/FairRootGroup/DDS.git
+cd DDS
+mkdir build_for_alfa
+cd build_for_alfa/
+pwd
+
+/usr/local/cmake/cmake-3.7.2/bin/cmake -C ../BuildSetup.cmake -DCMAKE_INSTALL_PREFIX=/Data1/codes/dd/aliceo2/april_with_addons/build_fairsoft/DDS -DBOOST_ROOT=/Data1/codes/dd/aliceo2/april_with_addons/build_fairsoft ..
+make wn_bin
+make install
+
+----------------------------------
+
+3) git clone -b dev https://github.com/FairRootGroup/FairRoot.git
+cd FairRoot/
+ls
+mkdir build
+cd build
+
+export SIMPATH=/Data1/codes/dd/aliceo2/april_with_addons/build_fairsoft
+
+/usr/local/cmake/cmake-3.7.2/bin/cmake -DCMAKE_INSTALL_PREFIX=/Data1/codes/dd/aliceo2/april_with_addons/build_fairsoft/FairRoot -DUSE_DIFFERENT_COMPILER=TRUE ..
+
+make
+make install
+
+--------------------------------------
+4) git clone https://github.com/VcDevel/Vc Vc
+cd Vc
+git checkout 1.0
+
+mkdir build
+cd build
+
+/usr/local/cmake/cmake-3.7.2/bin/cmake -DCMAKE_INSTALL_PREFIX=/Data1/codes/dd/aliceo2/april_with_addons/Vc/Vc-1.0 -DBUILD_TESTING=OFF ..
+make
+make install
+-------------------------------------------------------
+5) git clone http://github.com/alisw/AliRoot
+
+cd AliRoot/
+ls
+git checkout master
+mkdir build_for_alfa
+cd build_for_alfa/
+echo $SIMPATH
+export ALICE_ROOT=$SIMPATH/AliRoot
+export ALICE_TARGET='root-config --arch'
+export ROOTSYS=$SIMPATH
+/usr/local/cmake/cmake-3.7.2/bin/cmake -DCMAKE_INSTALL_PREFIX=$ALICE_ROOT -DZEROMQ=$SIMPATH -DROOTSYS=$ROOTSYS -DVc_DIR=/Data1/codes/dd/aliceo2/april_with_addons/Vc/Vc-1.0/lib/cmake/Vc -DCMAKE_CXX_FLAGS=-std=c++11 ..
+make
+make install
+
+
+===========================PYTHIA FIX=================================
+cd /Data1/codes/dd/aliceo2/april_with_addons/build_fairsoft/FairRoot/include/
+
+ln -s /Data1/codes/dd/aliceo2/april_with_addons/build_fairsoft/include/Pythia8 .
+
+cd /Data1/codes/dd/aliceo2/april_with_addons/build_fairsoft/lib
+
+ln -s /Data1/codes/dd/aliceo2/april_with_addons/build_fairsoft/AliRoot/lib/libpythia6.so .
+=====================================================================================
+
+6) git clone -b mft https://github.com/bovulpes/AliceO2.git
+cd AliceO2/
+mkdir buildo2
+cd buildo2/
+
+export FAIRROOTPATH=export FAIRROOTPATH=/Data1/codes/dd/aliceo2/april_with_addons/build_fairsoft/FairRoot
+
+/usr/local/cmake/cmake-3.7.2/bin/cmake -DFAIRROOT_INCLUDE_DIR=$FAIRROOTPATH/include -DFAIRROOT_LIBRARY_DIR=$FAIRROOTPATH/lib -DCMAKE_CXX_FLAGS=-std=c++11 -DDOC_INSTALL=ON -DBOOST_ROOT=/Data1/codes/dd/aliceo2/april_with_addons/build_fairsoft -DVc_DIR=/Data1/codes/dd/aliceo2/april_with_addons/Vc/Vc-1.0/lib/cmake/Vc -DUSE_DIFFERENT_COMPILER=TRUE ..
+make
+make install
+
+==============RUNNING MACROS========================================
+
+source /Data1/codes/dd/aliceo2/april_with_addons/AliceO2/buildo2/config.sh
+source /Data1/codes/dd/aliceo2/april_with_addons/build_fairsoft/DDS/DDS_env.sh
+root -l
+cd ../macro/
+=================================================================================================
